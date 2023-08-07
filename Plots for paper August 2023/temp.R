@@ -365,6 +365,66 @@ summary_control_data_all %>%
 
 
 
+#################################################################################
+
+summary_control_data_all %>%  
+  filter(amendment_code1 != "none") %>%  
+  filter(amendment_code1 != "non organic") %>% 
+  filter(amendment_code1 != "mixed" ) %>% 
+  
+  filter(!is.na(yield)) %>% 
+  filter(!is.na(control_yield)) %>% 
+  
+  filter(soil_modification != "Unmodified") %>% 
+  
+  
+  
+  ggplot( mapping = aes(control_yield, yield,)) +
+  geom_point(aes(colour= amendment_code1),alpha= 0.4) +
+  #geom_point(data = Bute, colour='black', alpha = 0.4)+
+  #geom_point(data = Younghusband, colour='black', alpha = 0.4)+ #no data for this
+  geom_point(data = Ouyen, colour='black', alpha = 0.4)+
+  geom_smooth(method = lm, se = FALSE) +
+  stat_regline_equation(
+    aes(label =  paste(..eq.label.., ..rr.label.., sep = "~~~~")),
+    formula = (y ~ x)
+  ) +
+  geom_abline(intercept = 0, slope = 1, linetype="dashed")+
+  
+  theme_bw()+
+  theme(legend.position = "none")+
+  labs(title = "Control yield - no summary. ANY soil modification \nnote each site, treatment, year and rep is matched to control
+      \nFacet wrap is amendment",
+       x = "control yield t/ha", y = "treatment yield t/ha")+
+  facet_wrap(.~ amendment_code1)
+###############################################################################
+
+#add the sites as an overlay.
+
+## Bute
+
+unique(summary_control_data_all$site)
+Younghusband <- summary_control_data_all %>% 
+  filter(amendment_code1 != "none") %>%  
+  filter(amendment_code1 != "non organic") %>% 
+  filter(amendment_code1 != "mixed" ) %>% 
+  
+  filter(site == "Younghusband" )
 
 
+Bute <- summary_control_data_all %>% 
+  filter(amendment_code1 != "none") %>%  
+  filter(amendment_code1 != "non organic") %>% 
+  filter(amendment_code1 != "mixed" ) %>% 
+  filter(site == "Bute_CSIRO" | site == "Bute_Trengrove")
 
+Ouyen <- summary_control_data_all %>% 
+  filter(amendment_code1 != "none") %>%  
+  filter(amendment_code1 != "non organic") %>% 
+  filter(amendment_code1 != "mixed" ) %>% 
+  filter(site == "Ouyen_Spade" | site == "Ouyen_Placement")
+
+
+Younghusband_temp <- summary_control_data_all %>% 
+    filter(site == "Younghusband" )
+unique(Younghusband_temp$Descriptors)
